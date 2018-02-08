@@ -86,8 +86,8 @@ mosquitto_pub -q 1 -h 172.20.1.120 -t relay-control -m t,4
 Replacing 'l' with 'r' (for "'r'elay") in the above 'l' commands and messages would control the relay state. In this case, the state of the actual load is not considered. The actual load can be OFF while the relay is ON, and vice-versa due to the "staircase wiring".
 
 
-### PCB Design
-The PCB is designed in KiCAD and the associated project files are [zipped and included](https://github.com/ajithvasudevan/HomeAutomation/raw/master/HA_KiCAD%20-%20PCB%20Design%20and%20Schematic.zip) in this project.
+### Circuit Schematic and PCB Design
+The Circuit Schematic and PCB are drawn/designed in KiCAD and the associated project files are [zipped and included](https://github.com/ajithvasudevan/HomeAutomation/raw/master/HA_KiCAD%20-%20PCB%20Design%20and%20Schematic.zip) in this project.
 
 
 
