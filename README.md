@@ -65,7 +65,7 @@ l,4,1
 ```
 Note that the first character in the message is "l", for "'l'oad".
 
-So the mosquitto_pub command would be:
+So the *mosquitto_pub* command would be:
 ```
 mosquitto_pub -q 1 -h 172.20.1.120 -t relay-control -m l,4,1
 ```
@@ -86,7 +86,7 @@ Replacing 'l' with 'r' (for "'r'elay") in the above 'l' commands and messages wo
 
 
 ### Feedback
-Whenever the state of any load changes, and also periodically every 3 seconds, an MQTT message containing the status of each load, and their corresponding relays (these need not be the same) is published from the Wemos on the topic ```relay-status```. So the mosquitto_sub command to receive these status messages is:
+Whenever the state of any load changes, and also periodically every 3 seconds, an MQTT message containing the status of each load, and their corresponding relays (these need not be the same) is published from the Wemos on the topic ```relay-status```. So the *mosquitto_sub* command to receive these status messages is:
 ```
 mosquitto_sub -q 1 -h 172.20.1.120 -t relay-status
 ```
