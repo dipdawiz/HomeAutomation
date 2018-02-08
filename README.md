@@ -15,32 +15,44 @@ This is basically a "Smart Switch" project, with the following features:
 10. The state of loads connected to the relay board is persisted on the Wemos, each time any state changes. This saved state can be optionally used to restore the load states after a power-cycle (reboot) of the system.
 11. MQTT Broker server is optional and can be disabled from the Web-UI.
 
+
+## Configuration
+Upon first boot, the Wemos starts up in AP mode with SSID **RelayBoard** and the Web-UI is accessible at http://relay.local/ OR http://192.168.4.1 from a computer or mobile phone connected to the RelayBoard Wi-Fi network. The home router SSID and password and other details can be entered and saved (persisted on the Wemos). Upon restarting, the Wemos should connect to the home router and get an IP address from there. Now the Web-UI should still be accessible at http://relay.local/  or at http://<whatever IP address the Wemos got from the router>/
+
+
+## Web-User Interface
+
+<img src="https://github.com/ajithvasudevan/HomeAutomation/raw/master/HomeAutomation%20-%20UI.png" alt="Drawing" width="400px"/>
+
+
+
+
 ## Control API
 
 ### HTTP Control API
 
 To turn ON the 4th Load (connected to the 4th Relay), the URL is:
 ```
-http://<IP_Address_of_WeMos>/relay-control?l=4,1
+http://<IP_Address_of_Wemos>/relay-control?l=4,1
 ```
 Note that the query paraleter is "l", for "'l'oad".
 
 To turn OFF the 4th Load (connected to the 4th Relay), the URL is:
 ```
-http://<IP_Address_of_WeMos>/relay-control?l=4,0
+http://<IP_Address_of_Wemos>/relay-control?l=4,0
 ```
 To turn ON all 5 Loads, the URL is:
 ```
-http://<IP_Address_of_WeMos>/relay-control?l=0,1
+http://<IP_Address_of_Wemos>/relay-control?l=0,1
 ```
 To turn OFF all 5 Loads, the URL is:
 ```
-http://<IP_Address_of_WeMos>/relay-control?l=0,0
+http://<IP_Address_of_Wemos>/relay-control?l=0,0
 ```
 
 One can toggle the state of a load. For example, to toggle load #4, the URL is:
 ```
-http://<IP_Address_of_WeMos>/relay-control?t=4
+http://<IP_Address_of_Wemos>/relay-control?t=4
 ```
 
 
@@ -74,11 +86,6 @@ Replacing 'l' with 'r' (for "'r'elay") in the above 'l' commands and messages wo
 
 ### PCB Design
 The PCB is designed in KiCAD and the associated project files are [zipped and included](https://github.com/ajithvasudevan/HomeAutomation/raw/master/HA_KiCAD%20-%20PCB%20Design%20and%20Schematic.zip) in this project.
-
-
-## Web-User Interface
-
-<img src="https://github.com/ajithvasudevan/HomeAutomation/raw/master/HomeAutomation%20-%20UI.png" alt="Drawing" width="400px"/>
 
 
 
