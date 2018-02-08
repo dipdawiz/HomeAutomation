@@ -17,7 +17,7 @@ This is basically a "Smart Switch" project, with the following features:
 
 
 ## Configuration
-Upon first boot, the Wemos starts up in AP mode with SSID **RelayBoard** and the Web-UI is accessible at http://relay.local/ OR http://192.168.4.1 from a computer or mobile phone connected to the RelayBoard Wi-Fi network. The home router SSID and password and other details can be entered and saved (persisted on the Wemos). Upon restarting, the Wemos should connect to the home router and get an IP address from there. Now the Web-UI should still be accessible at http://relay.local/  or at http://<whatever IP address the Wemos got from the router>/
+Upon first boot, the Wemos starts up in AP mode with SSID **RelayBoard** and the Web-UI is accessible at `http://relay.local/` OR `http://192.168.4.1` from a computer or mobile phone connected to the RelayBoard Wi-Fi network. The home router SSID and password and other details can be entered and saved (persisted on the Wemos). Upon restarting, the Wemos should connect to the home router and get an IP address from there. Now the Web-UI should still be accessible at `http://relay.local/`  or at `http://<whatever IP address the Wemos got from the router>/`
 
 
 ## Web-User Interface
