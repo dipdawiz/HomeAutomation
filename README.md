@@ -11,6 +11,9 @@ This is basically a "Smart Switch" project, with the following features:
 6. The PCB is designed to be "scalable". So it can be literally cut to the user's needs. So if the switchboard is small, with fewer than 5 switches that need to be automated, then the board can be cut to just include the needed number of relays.
 7. The relays can be easily wired to existing wall switches. They can either be connected in parallel to the existing switches, or be connected in a "staircase wiring" configuration to 2-way switches that replace existing 1-way switches, allowing independent control of the lights/fans both electronically (remotely) and manually.
 8. The system exposes a basic Web-UI to let the user configure the Wi-Fi router and MQTT Server IP address details and also show status of the "loads" connected, and to control them.
+9. There is no "cloud component" or other app dependencies for using this system. All network traffic is local.
+10. The state of loads connected to the relay board is persisted on the Wemos, each time any state changes. This saved state can be optionally used to restore the load states after a power-cycle (reboot) of the system.
+11. MQTT Broker server is optional and can be disabled from the Web-UI.
 
 ## Control API
 
