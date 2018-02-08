@@ -55,7 +55,6 @@ One can toggle the state of a load. For example, to toggle load #4, the URL is:
 http://<IP_Address_of_Wemos>/relay-control?t=4
 ```
 
-
 ### MQTT Control
 
 All command messages are to be sent to the topic ```relay-control```
@@ -84,6 +83,14 @@ mosquitto_pub -q 1 -h 172.20.1.120 -t relay-control -m t,4
 
 
 Replacing 'l' with 'r' (for "'r'elay") in the above 'l' commands and messages would control the relay state. In this case, the state of the actual load is not considered. The actual load can be OFF while the relay is ON, and vice-versa due to the "staircase wiring".
+
+
+### Feedback
+Whenever the state of any load changes, and also periodically every 3 seconds, an MQTT message containing the status of each load, and their corresponding relays (these need not be the same) is published from the Wemos on the topic "relay-status". So the mosquitto_sub command to receive these status messages is:
+```
+mosquitto_sub -q 1 -h 172.20.1.120 -t relay-status
+```
+
 
 
 ### Circuit Schematic and PCB Design
