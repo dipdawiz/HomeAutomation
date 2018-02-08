@@ -90,7 +90,12 @@ Whenever the state of any load changes, and also periodically every 3 seconds, a
 ```
 mosquitto_sub -q 1 -h 172.20.1.120 -t relay-status
 ```
-
+The message looks like this:
+```
+0,0,0,1,0|0,0,0,0,0
+```
+In the above example, the 4th Load is ON, with all other Loads OFF, and also, all Relays are OFF.
+A message like ```0,1,0,0,0|0,0,1,0,0``` indicates that the 2nd Load is ON, all other Loads are OFF, and also, the 3rd Relay is ON.
 
 
 ### Circuit Schematic and PCB Design
