@@ -35,7 +35,7 @@ To turn ON the 4th Load (connected to the 4th Relay), the URL is:
 ```
 http://<IP_Address_of_Wemos>/relay-control?l=4,1
 ```
-Note that the query paraleter is "l", for "'l'oad".
+Note that the query parameter is "l", for "'l'oad".
 
 To turn OFF the 4th Load (connected to the 4th Relay), the URL is:
 ```
@@ -64,6 +64,8 @@ To turn ON the 4th Load (connected to the 4th Relay), the MQTT message to be sen
 ```
 l,4,1
 ```
+Note that the first character in the message is "l", for "'l'oad".
+
 So the mosquitto_pub command would be:
 ```
 mosquitto_pub -q 1 -h 172.20.1.120 -t relay-control -m l,4,1
