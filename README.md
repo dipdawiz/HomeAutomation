@@ -20,7 +20,7 @@ Upon first boot, the Wemos starts up in AP mode with SSID **RelayBoard** and the
 
 ## Web-User Interface
 
-![Web UI]("https://github.com/dipdawiz/HomeAutomation/raw/master/relay-control-up.jpg")
+![Web UI]("https://github.com/dipdawiz/HomeAutomation/raw/master/relay-control-ui.jpg")
 
 
 ## Control API
