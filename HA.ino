@@ -11,17 +11,13 @@
 char ssid[40];
 char pwd[40];
 
-int restore_state = 1;
-char savedstate[22] = "0,0,0,0";
-int s0, s1, s2, s3;
-String p;
-const int rx = 3;
-const int tx = 1;
-int pins[] = {D5, D6, D7, D8};
+int restore_state = 1; //restore state flag
+char savedstate[22] = "0,0,0,0"; //saved state of 4 pins
+int s0, s1, s2, s3; //state of each PIN
+int pins[] = {D5, D6, D7, D8}; //Array of pins to control
 int numPins = 4;
-int pin, state;
 WiFiClient client;
-IPAddress myIP;
+IPAddress myIP; //wemos ip address
 const char *ap_ssid = "RelayBoard";
 const char *ap_pwd = "";
 AsyncWebServer server(80);
@@ -74,32 +70,20 @@ void setup() {
     Serial.println("failed to mount FS");
   }
 
- 
-
-  // Connect to WiFi access point.
-  Serial.println(); Serial.println();
-  Serial.print("Connecting to ");
-  Serial.println(ssid);
-  
-  WiFi.mode(WIFI_STA);
-  WiFi.begin(ssid, pwd);
-  int ctr = 0;
-  while (WiFi.status() != WL_CONNECTED && ctr < 30) {
-    delay(500);
-    Serial.print(".");
-    ctr++;
-  }
-  if(WiFi.status() == WL_CONNECTED) {
-    myIP = WiFi.localIP();
-    Serial.println();
-    Serial.println("WiFi connected");
-    Serial.println("IP address: "); Serial.println(myIP);
+  if(ssid == "" || ssid.length()== 0) {
+    Serial.println("Starting Access Point ...");
+    WiFi.mode(WIFI_AP);
+    WiFi.softAP(ap_ssid);
+    myIP = WiFi.softAPIP();
+    Serial.print("Access Point IP address: ");
+    Serial.println(myIP);    
+    Serial.println("Access the relay board at  http://relay.local/");
   } else {
-    Serial.println(".");
-    Serial.print("Could not connect to WiFi: "); Serial.println(ssid);
-    Serial.println("*** Retrying ***");
-    WiFi.mode(WIFI_OFF);
-    delay(3000);
+    // Connect to WiFi access point.
+    Serial.println(); Serial.println();
+    Serial.print("Connecting to ");
+    Serial.println(ssid);
+    
     WiFi.mode(WIFI_STA);
     WiFi.begin(ssid, pwd);
     int ctr = 0;
@@ -113,19 +97,45 @@ void setup() {
       Serial.println();
       Serial.println("WiFi connected");
       Serial.println("IP address: "); Serial.println(myIP);
-      
     } else {
-      Serial.println();
+      Serial.println(".");
       Serial.print("Could not connect to WiFi: "); Serial.println(ssid);
-      Serial.println("Starting Access Point ...");
-      WiFi.mode(WIFI_AP);
-      WiFi.softAP(ap_ssid);
-      myIP = WiFi.softAPIP();
-      Serial.print("Access Point IP address: ");
-      Serial.println(myIP);
+      Serial.println("*** Retrying ***");
+      WiFi.mode(WIFI_OFF);
+      delay(3000);
+      WiFi.mode(WIFI_STA);
+      WiFi.begin(ssid, pwd);
+      int ctr = 0;
+      while (WiFi.status() != WL_CONNECTED && ctr < 30) {
+        delay(500);
+        Serial.print(".");
+        ctr++;
+      }
+      if(WiFi.status() == WL_CONNECTED) {
+        myIP = WiFi.localIP();
+        Serial.println();
+        Serial.println("WiFi connected");
+        Serial.println("IP address: "); Serial.println(myIP);
+        
+      } else {
+        Serial.println();
+        Serial.print("Could not connect to WiFi: "); Serial.println(ssid);
+        Serial.println("Starting Access Point ...");
+        WiFi.mode(WIFI_AP);
+        WiFi.softAP(ap_ssid);
+        myIP = WiFi.softAPIP();
+        Serial.print("Access Point IP address: ");
+        Serial.println(myIP);
+        Serial.println("Access the relay board at  http://relay.local/");
+      }
     }
+    
   }
-  String ipaddr = String(myIP);
+ 
+
+
+  
+  //String ipaddr = String(myIP);
   
   //MDNS.addService("http","tcp",80);
   if (!MDNS.begin("relay")) {
@@ -134,12 +144,7 @@ void setup() {
       delay(1000);
     }
   }
-  Serial.println("Access the relay board at  http://relay.local/");  
-
-
-
-
-
+    
   server.on("/", HTTP_GET, [](AsyncWebServerRequest *request){
     String html = ""
     "<!DOCTYPE html><html><head><meta charset='UTF-8'><title>Wi-Fi Relay Board</title>"
@@ -234,7 +239,7 @@ void setup() {
       cpin = st.substring(0, 1).toInt();
       cstate = st.substring(2).toInt();
               
-      if(cpin > 0) {
+     if(cpin > 0) {
         if(cstate == 0) {
           digitalWrite(pins[cpin-1], LOW);
           delayMicroseconds(10000);
@@ -242,7 +247,6 @@ void setup() {
           digitalWrite(pins[cpin-1], HIGH);
           delayMicroseconds(10000);
         }
-
       } else {
         if(cstate == 0){
           for (int i = 0; i < 4; i++) {
@@ -255,8 +259,7 @@ void setup() {
             delayMicroseconds(10000);
           }
         }
-      }
-      Serial.print(getStatus());
+      }      
     }
   
     if(request->hasParam("t")) {
@@ -270,7 +273,6 @@ void setup() {
         nstate = HIGH;
       }
       digitalWrite(pins[pin-1], nstate);
-      Serial.print(getStatus());
     }
 
     delayMicroseconds(50000);
@@ -362,10 +364,8 @@ void setup() {
   server.begin();
     
   delay(1000);
-//  Serial.end();  // Have to end() it as RX and TX are being used for Digital IO 
-//  delay(100);
-
-  
+  Serial.end();  // Have to end() it as RX and TX are being used for Digital IO 
+  delay(100);
 
   if(restore_state) {
     Serial.println("Restoring state from config");
@@ -454,7 +454,7 @@ String getStatus() {
   s2 = digitalRead(D7);
   s3 = digitalRead(D8);
 
-  String msg = (String(s0==0) + "," + String(s1==0) + "," + String(s2==0) + "," + String(s3==0));
+  String msg = (String(s0) + "," + String(s1) + "," + String(s2) + "," + String(s3));
   return msg;
 }
 
