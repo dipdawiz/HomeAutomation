@@ -234,31 +234,29 @@ void setup() {
       cpin = st.substring(0, 1).toInt();
       cstate = st.substring(2).toInt();
               
-      if(cpin < 5 && cpin > -1) {
-        if(cpin > 0) {
-          if(cstate == 0) {
-            digitalWrite(pins[cpin-1], LOW);
-            delayMicroseconds(10000);
-          } else {
-            digitalWrite(pins[cpin-1], HIGH);
+      if(cpin > 0) {
+        if(cstate == 0) {
+          digitalWrite(pins[cpin-1], LOW);
+          delayMicroseconds(10000);
+        } else {
+          digitalWrite(pins[cpin-1], HIGH);
+          delayMicroseconds(10000);
+        }
+
+      } else {
+        if(cstate == 0){
+          for (int i = 0; i < 4; i++) {
+            digitalWrite(pins[i], LOW);
             delayMicroseconds(10000);
           }
-
-        } else {
-          if(cstate == 0){
-            for (int i = 0; i < 4; i++) {
-              digitalWrite(pins[i], LOW);
-              delayMicroseconds(10000);
-            }
-          }else{
-            for (int i = 0; i < 4; i++) {
-              digitalWrite(pins[i], HIGH);
-              delayMicroseconds(10000);
-            }
+        }else{
+          for (int i = 0; i < 4; i++) {
+            digitalWrite(pins[i], HIGH);
+            delayMicroseconds(10000);
           }
         }
-        Serial.print(getStatus());
       }
+      Serial.print(getStatus());
     }
   
     if(request->hasParam("t")) {
