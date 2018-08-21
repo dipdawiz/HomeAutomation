@@ -12,6 +12,7 @@ This is basically a "Smart Switch" project, with the following features:
 7. The system exposes a basic Web-UI to let the user configure the Wi-Fi router and also show status of the "loads" connected, and to control them.
 8. There is no "cloud component" or other app dependencies for using this system. All network traffic is local.
 9. The state of loads connected to the relay board is persisted on the Wemos, each time any state changes. This saved state can be optionally used to restore the load states after a power-cycle (reboot) of the system.
+10. What I used is active low relay which takes a HIGH to shut the relay off. 
 
 
 ## Configuration
