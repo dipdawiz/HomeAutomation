@@ -1,5 +1,3 @@
-
-
 #include <FS.h>
 #include <ESP8266mDNS.h>
 #include <ESPAsyncTCP.h>
@@ -14,8 +12,10 @@ char pwd[40];
 int restore_state = 1; //restore state flag
 char savedstate[22] = "0,0,0,0"; //saved state of 4 pins
 int s0, s1, s2, s3; //state of each PIN
-int pins[] = {D5, D6, D7, D8}; //Array of pins to control
+int pins[] = {D7, D6, D1, D2}; //Array of pins to control
 int numPins = 4;
+int ON = LOW;
+int OFF = HIGH;
 WiFiClient client;
 IPAddress myIP; //wemos ip address
 const char *ap_ssid = "RelayBoard";
@@ -70,7 +70,16 @@ void setup() {
     Serial.println("failed to mount FS");
   }
 
-  if(ssid == "" || ssid.length()== 0) {
+  //restore state or OFF
+  if(restore_state) {
+    restoreState();
+  } else {
+    saveConfig();
+    loadControl(0, OFF);
+  }
+
+  //if no ssid, start as AP mode
+  if(ssid == "" ) {
     Serial.println("Starting Access Point ...");
     WiFi.mode(WIFI_AP);
     WiFi.softAP(ap_ssid);
@@ -98,6 +107,7 @@ void setup() {
       Serial.println("WiFi connected");
       Serial.println("IP address: "); Serial.println(myIP);
     } else {
+      //failed to connect first time, so retry once more
       Serial.println(".");
       Serial.print("Could not connect to WiFi: "); Serial.println(ssid);
       Serial.println("*** Retrying ***");
@@ -118,6 +128,7 @@ void setup() {
         Serial.println("IP address: "); Serial.println(myIP);
         
       } else {
+        //could not connect for second time also, probable issue in ssid/network, start in AP mode
         Serial.println();
         Serial.print("Could not connect to WiFi: "); Serial.println(ssid);
         Serial.println("Starting Access Point ...");
@@ -133,18 +144,15 @@ void setup() {
   }
  
 
-
-  
-  //String ipaddr = String(myIP);
-  
-  //MDNS.addService("http","tcp",80);
   if (!MDNS.begin("relay")) {
     Serial.println("Error setting up MDNS responder!");
     while(1) { 
       delay(1000);
     }
   }
-    
+
+
+  //http server routes - UI
   server.on("/", HTTP_GET, [](AsyncWebServerRequest *request){
     String html = ""
     "<!DOCTYPE html><html><head><meta charset='UTF-8'><title>Wi-Fi Relay Board</title>"
@@ -217,11 +225,11 @@ void setup() {
     "</table><BR>"
     "<HR>"
     "<table>"
-    "<tr><td><B>Load 1</B></td><td>: &nbsp;&nbsp;&nbsp;&nbsp;<input type='radio' name='load_1' value='0' checked onClick='loadControl(this);'> OFF  &nbsp;</td><td>&nbsp;&nbsp;&nbsp;&nbsp;<input type='radio' name='load_1' value='1' onClick='loadControl(this);'> ON </td></tr>"
-    "<tr><td><B>Load 2</B></td><td>: &nbsp;&nbsp;&nbsp;&nbsp;<input type='radio' name='load_2' value='0' checked onClick='loadControl(this);'> OFF  &nbsp;</td><td>&nbsp;&nbsp;&nbsp;&nbsp;<input type='radio' name='load_2' value='1' onClick='loadControl(this);'> ON </td></tr>"
-    "<tr><td><B>Load 3</B></td><td>: &nbsp;&nbsp;&nbsp;&nbsp;<input type='radio' name='load_3' value='0' checked onClick='loadControl(this);'> OFF  &nbsp;</td><td>&nbsp;&nbsp;&nbsp;&nbsp;<input type='radio' name='load_3' value='1' onClick='loadControl(this);'> ON </td></tr>"
-    "<tr><td><B>Load 4</B></td><td>: &nbsp;&nbsp;&nbsp;&nbsp;<input type='radio' name='load_4' value='0' checked onClick='loadControl(this);'> OFF  &nbsp;</td><td>&nbsp;&nbsp;&nbsp;&nbsp;<input type='radio' name='load_4' value='1' onClick='loadControl(this);'> ON </td></tr>"
-    "<tr><td><B>ALL</B></td><td>: &nbsp;&nbsp;&nbsp;&nbsp; </td><td><input type='button' name='alloff' value='OFF' onClick='allloads(0);'> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <input type='button' name='allon' value='ON' onClick='allloads(1);'> </td></tr>"
+    "<tr><td><B>Load 1</B></td><td>: &nbsp;&nbsp;&nbsp;&nbsp;<input type='radio' name='load_1' value='1' checked onClick='loadControl(this);'> ON  &nbsp;</td><td>&nbsp;&nbsp;&nbsp;&nbsp;<input type='radio' name='load_1' value='0' onClick='loadControl(this);'> OFF </td></tr>"
+    "<tr><td><B>Load 2</B></td><td>: &nbsp;&nbsp;&nbsp;&nbsp;<input type='radio' name='load_2' value='1' checked onClick='loadControl(this);'> ON  &nbsp;</td><td>&nbsp;&nbsp;&nbsp;&nbsp;<input type='radio' name='load_2' value='0' onClick='loadControl(this);'> OFF </td></tr>"
+    "<tr><td><B>Load 3</B></td><td>: &nbsp;&nbsp;&nbsp;&nbsp;<input type='radio' name='load_3' value='1' checked onClick='loadControl(this);'> ON  &nbsp;</td><td>&nbsp;&nbsp;&nbsp;&nbsp;<input type='radio' name='load_3' value='0' onClick='loadControl(this);'> OFF </td></tr>"
+    "<tr><td><B>Load 4</B></td><td>: &nbsp;&nbsp;&nbsp;&nbsp;<input type='radio' name='load_4' value='1' checked onClick='loadControl(this);'> ON  &nbsp;</td><td>&nbsp;&nbsp;&nbsp;&nbsp;<input type='radio' name='load_4' value='0' onClick='loadControl(this);'> OFF </td></tr>"
+    "<tr><td><B>ALL</B></td><td>: &nbsp;&nbsp;&nbsp;&nbsp; </td><td><input type='button' name='alloff' value='ON' onClick='allloads(0);'> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <input type='button' name='allon' value='OFF' onClick='allloads(1);'> </td></tr>"
     "</table><BR>"
     "<HR>"
     
@@ -230,6 +238,7 @@ void setup() {
     request->send(200, "text/html", html);
   });
 
+  //relay-control route takes query string l=load,state or t=load (load is the pin index)
   server.on("/relay-control", HTTP_GET, [](AsyncWebServerRequest *request){
     String st = "NA";
     if(request->hasParam("l")) {
@@ -241,22 +250,22 @@ void setup() {
               
      if(cpin > 0) {
         if(cstate == 0) {
-          digitalWrite(pins[cpin-1], LOW);
+          digitalWrite(pins[cpin-1], OFF);
           delayMicroseconds(10000);
         } else {
-          digitalWrite(pins[cpin-1], HIGH);
+          digitalWrite(pins[cpin-1], ON);
           delayMicroseconds(10000);
         }
       } else {
         if(cstate == 0){
           for (int i = 0; i < 4; i++) {
-            digitalWrite(pins[i], LOW);
-            delayMicroseconds(10000);
+            digitalWrite(pins[i], ON);
+            delayMicroseconds(100000);
           }
         }else{
           for (int i = 0; i < 4; i++) {
-            digitalWrite(pins[i], HIGH);
-            delayMicroseconds(10000);
+            digitalWrite(pins[i], OFF);
+            delayMicroseconds(100000);
           }
         }
       }      
@@ -267,10 +276,10 @@ void setup() {
       st = p->value().c_str();
       int pin = st.toInt();
       int nstate = digitalRead(pins[pin-1]);
-      if(nstate == HIGH){
-        nstate = LOW;
+      if(nstate == ON){
+        nstate = OFF;
       } else {
-        nstate = HIGH;
+        nstate = ON;
       }
       digitalWrite(pins[pin-1], nstate);
     }
@@ -290,7 +299,7 @@ void setup() {
     saveConfig();
   });
 
-
+  //save route to save config
   server.on("/save", HTTP_GET, [](AsyncWebServerRequest *request){
     if(request->hasParam("ssid")) {
       AsyncWebParameter* p = request->getParam("ssid");
@@ -320,12 +329,14 @@ void setup() {
     saveConfig();
   });
 
+  //restart the wemos d1 mini
   server.on("/restart", HTTP_GET, [](AsyncWebServerRequest *request){
-    loadControl(0, 0);
-    delayMicroseconds(500000);
+    loadControl(0, OFF);
+    delay(5000);
     ESP.restart();  
   });
 
+  //getconfig gets you the current configuration as well current state of relays/pins
   server.on("/getconfig", HTTP_GET, [](AsyncWebServerRequest *request){
     //String currentstate = getStatus();
     String st = "{ \"ssid\" : \"" + String(ssid) 
@@ -338,7 +349,7 @@ void setup() {
     request->send(200, "application/json", st);
   });
 
-
+  //reset the config file to an empty file
   server.on("/resetconfig", HTTP_GET, [](AsyncWebServerRequest *request){
     request->send(200, "application/json", "Config Reset");
     Serial.println("deleting config");
@@ -354,32 +365,25 @@ void setup() {
     ESP.reset();   
   });
 
-
+  //handle file not found error
   server.onNotFound([](AsyncWebServerRequest *request){
     Serial.printf("NOT_FOUND: ");
     Serial.printf(" http://%s%s\n", request->host().c_str(), request->url().c_str());
     request->send(404);
   });
 
+  //start the http server
   server.begin();
-    
   delay(1000);
   Serial.end();  // Have to end() it as RX and TX are being used for Digital IO 
   delay(100);
-
-  if(restore_state) {
-    Serial.println("Restoring state from config");
-    restoreState();
-  } else {
-    loadControl(0, 0);
-  }
 }
 
 //--------------------------------------------------------------------------------
 
 void restoreState() {
   for(int i=0; i<4; i++){
-    loadControl(i + 1, String(savedstate).substring(2 * i, 2 * i + 1).toInt());
+    loadControl(i+1, String(savedstate).substring(2 * i, 2 * i + 1).toInt());
   } 
 }
 
@@ -411,9 +415,7 @@ void initGPIO() {
   for(int i=0; i < 4; i++)
   {
     pinMode(pins[i], OUTPUT);
-    delay(100);
-    digitalWrite(pins[i], LOW);
-//    delayMicroseconds(50000);
+    digitalWrite(pins[i], OFF);
   }
 }
 
@@ -424,22 +426,19 @@ void loop(){
     delay(100);
     digitalWrite(D4, 1);
     delay(5000);
-  
 }
 
 //--------------------------------------------------------------------------------
 
 void loadControl(int load, int newloadstate) {
 //  Serial.println("In loadControl");
-  if(load < 4  && load> -1) {
-    if(load == 0) {
-      for (int i = 1; i < 5; i++) {
-        loadControl(i, newloadstate);
-        delayMicroseconds(50000);
-      }
-    } else {
-      digitalWrite(pins[load], newloadstate);
+  if(load == 0) {
+    for (int i = 1; i < 5; i++) {
+      loadControl(i, newloadstate);
+      delay(100);
     }
+  } else {
+    digitalWrite(pins[load-1], newloadstate);
   }
 }
 
@@ -449,12 +448,11 @@ void loadControl(int load, int newloadstate) {
 
 
 String getStatus() {
-  s0 = digitalRead(D5);
+  s0 = digitalRead(D7);
   s1 = digitalRead(D6);
-  s2 = digitalRead(D7);
-  s3 = digitalRead(D8);
+  s2 = digitalRead(D1);
+  s3 = digitalRead(D2);
 
   String msg = (String(s0) + "," + String(s1) + "," + String(s2) + "," + String(s3));
   return msg;
 }
-
