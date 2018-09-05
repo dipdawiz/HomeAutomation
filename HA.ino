@@ -1,3 +1,5 @@
+
+
 #include <FS.h>
 #include <ESP8266mDNS.h>
 #include <ESPAsyncTCP.h>
@@ -14,8 +16,8 @@ char savedstate[22] = "0,0,0,0"; //saved state of 4 pins
 int s0, s1, s2, s3; //state of each PIN
 int pins[] = {D7, D6, D1, D2}; //Array of pins to control
 int numPins = 4;
-int ON = LOW; //active low relay takes LOW to switch on
-int OFF = HIGH; //active low relay takes HIGH to switch off
+int ON = LOW;
+int OFF = HIGH;
 WiFiClient client;
 IPAddress myIP; //wemos ip address
 const char *ap_ssid = "RelayBoard";
