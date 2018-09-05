@@ -6,7 +6,7 @@ This is for someone who are looking for steps towards thier first home automatio
 
 You give command to Alexa (Echo); A emulator of famous Belkin Wemo switch, would receive your voice command from Alexa and make appropriate HTTP call; we have a relay control that can control a switch (relay) by HTTP command; as relay switches on your device is switches on/off.
 
-![how-it-works](https://github.com/dipdawiz/HomeAutomation/raw/master/how-it-works.jpg)
+![how-it-works](https://github.com/dipdawiz/HomeAutomation/raw/master/How-it-works.jpg)
 
 Now following things we have to do
 
