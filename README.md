@@ -6,7 +6,7 @@ This is for someone who are looking for steps towards thier first home automatio
 
 You give command to Alexa (Echo); A emulator of famous Belkin Wemo switch, would receive your voice command from Alexa and make appropriate HTTP call; we have a relay control that can control a switch (relay) by HTTP command; as relay switches on your device is switches on/off.
 
-![how-it-works](https://github.com/dipdawiz/HomeAutomation/raw/master/How-it-works.jpg)
+![how-it-works](https://github.com/dipdawiz/HomeAutomation/raw/master/How-it-works.png)
 
 Now following things we have to do
 
@@ -120,7 +120,7 @@ Now deploy the flow and it would be ready to use.
 
 ## Setup Amazon Echo
 
-As soon as you deploy your node-red flow in previous step, you are ready to set up your Echo (Dot/Plus). On your mobile, open Alexa app. From the menu, click on Smart Home. And add a device. it would search and find out as many wemo-emu node you added in your flow. Add them and you are good to give voice command to Alexa/Echo/Computer. Like in my example, if I say, Alexa, switch on Living room lights, it switch on relay for the lights in living room.
+As soon as you deploy your node-red flow in previous step, you are ready to set up your Echo (Dot/Plus). On your mobile, open Alexa app. From the menu, click on Smart Home. And add a device. it would search and find out as many wemo-emu node you added in your flow. Add them and you are good to give voice command to Alexa/Echo/Computer. Like in my example, if I say, "Alexa, switch on Living room lights", it switch on relay for the lights in living room.
 
 #### Fun with Routine
 
@@ -137,7 +137,7 @@ This is where you actually connect the relay control to your physical switch boa
 Here is how the connection would look
 ![elecrtic-connection](https://github.com/dipdawiz/HomeAutomation/raw/master/electric-connection.png)
 
-#### Wemos, Relays and Power
+#### Wemos, Relays, Power and Echo
 
 Relay: 5v 4 channel relay.
 https://www.amazon.in/REES52-Optocoupler-Channel-Control-Arduino/dp/B01HXM1G9Q/
@@ -150,6 +150,9 @@ https://www.amazon.in/SunRobotics-Hi-Link-HLK-5M05-Step-Down-220V-5V/dp/B0734SG8
 Wemos: Wemos/Lolin D1 mini (or its replica)
 https://www.amazon.in/Arduino-D1-Mini-V2-Development/dp/B01FMJ0H2Y
 (Amazon.in search for wemos d1 mini)
+
+Echo Dot: Amazon Echo Dot 
+https://www.amazon.in/Echo-Dot-Voice-control-weather/dp/B071NB4PGV
 
 ## Prototype
 
