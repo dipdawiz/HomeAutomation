@@ -137,7 +137,7 @@ This is where you actually connect the relay control to your physical switch boa
 Here is how the connection would look
 ![elecrtic-connection](https://github.com/dipdawiz/HomeAutomation/raw/master/electric-connection.png)
 
-#### Wemos, Relays, Power and Echo
+#### Wemos, Relays, Power, Raspberry Pi and Echo
 
 Relay: 5v 4 channel relay.
 https://www.amazon.in/REES52-Optocoupler-Channel-Control-Arduino/dp/B01HXM1G9Q/
@@ -153,6 +153,9 @@ https://www.amazon.in/Arduino-D1-Mini-V2-Development/dp/B01FMJ0H2Y
 
 Echo Dot: Amazon Echo Dot 
 https://www.amazon.in/Echo-Dot-Voice-control-weather/dp/B071NB4PGV
+
+Raspberry Pi: Raspberry PI 3b+
+https://www.amazon.in/Raspberry-Pi-3B-plus-Motherboard/dp/B07BDR5PDW/
 
 ## Prototype
 
