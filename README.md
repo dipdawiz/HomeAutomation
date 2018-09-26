@@ -157,6 +157,9 @@ https://www.amazon.in/Echo-Dot-Voice-control-weather/dp/B071NB4PGV
 Raspberry Pi: Raspberry PI 3b+
 https://www.amazon.in/Raspberry-Pi-3B-plus-Motherboard/dp/B07BDR5PDW/
 
+Go light with Raspberry PI Zero W
+https://www.amazon.in/Raspberry-Pi-Zero-Development-Built/dp/B06XFZC3BX
+
 ## Prototype
 
 ![Prototype](https://github.com/dipdawiz/HomeAutomation/raw/master/prototype.jpg)
